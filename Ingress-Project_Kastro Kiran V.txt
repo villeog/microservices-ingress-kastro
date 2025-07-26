@@ -158,6 +158,14 @@ sudo apt install unzip
 unzip awscliv2.zip
 sudo ./aws/install
 
+========above did not work, so i used an updated version ==================
+sudo apt install curl unzip
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+aws --version
+============end of updated version========================
+
 Configure aws by executing below command
 aws configure
 
