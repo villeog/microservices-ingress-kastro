@@ -153,7 +153,8 @@ With this we have created the IAM User with appropriate permissions to create th
 
 4.4. Install AWS CLI (to interact with AWS Account)
 sudo apt update
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86\_64.zip" -o "awscliv2.zip"
+#curl "https://awscli.amazonaws.com/awscli-exe-linux-x86\_64.zip" -o "awscliv2.zip"
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 sudo apt install unzip
 unzip awscliv2.zip
 sudo ./aws/install
