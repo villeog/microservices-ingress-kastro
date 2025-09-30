@@ -6,6 +6,9 @@ pipeline {
         KUBECONFIG = '/home/cr/.kube/config'
         NAMESPACE = 'default'
         APP_NAME = 'techsolutions'
+        DEPLOYMENT_NAME = "${APP_NAME}-deployment"
+        SERVICE_NAME = "${APP_NAME}-service"
+        INGRESS_NAME = "${APP_NAME}-ingress"
     }
 
     stages {
@@ -64,7 +67,7 @@ pipeline {
                 withEnv(["KUBECONFIG=$KUBECONFIG"]) {
                     sh '''
                     echo "🧪 Replacing image tag in deployment..."
-                    sed -i "s|kastrov/techsolutions-app:latest|kastrov/techsolutions-app:${IMAGE_TAG}|g" k8s/deployment.yaml
+                    sed -i "s|villers118/techsolutions-app:latest|villers118/techsolutions-app:${IMAGE_TAG}|g" k8s/deployment.yaml
 
                     echo "🚀 Applying deployment..."
                     kubectl apply -f k8s/deployment.yaml
@@ -140,23 +143,22 @@ pipeline {
             }
         }
 
-        post {
-            always {
-                echo 'Cleaning up Docker images...'
-                sh "docker rmi ${DOCKER_HUB_REPO}:${env.IMAGE_TAG} || true"
-                sh "docker rmi ${DOCKER_HUB_REPO}:latest || true"
-            }
-
-            success {
-                echo 'Pipeline completed successfully!'
-                echo "Access your application at: ${env.INGRESS_URL}"
-            }
-
-            failure {
-                echo 'Pipeline failed! Please check the logs.'
-            }
-        }
     }
 
+    post {
+    always {
+        echo 'Cleaning up Docker images...'
+        sh "docker rmi ${DOCKER_HUB_REPO}:${env.IMAGE_TAG} || true"
+        sh "docker rmi ${DOCKER_HUB_REPO}:latest || true"
+    }
 
+    success {
+        echo 'Pipeline completed successfully!'
+        echo "Access your application at: ${env.INGRESS_URL ?: 'Ingress URL not available'}"
+    }
+
+    failure {
+        echo 'Pipeline failed! Please check the logs.'
+    }
+}
 }
