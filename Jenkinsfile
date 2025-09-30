@@ -34,50 +34,12 @@ pipeline {
             }
         }
 
-        stage('Verify kubectl context') {
-            steps {
-                sh 'kubectl config current-context'
-                sh 'kubectl get nodes'
-            }
-        }
 
-        stage('Deploy to Kubernetes') {
-            steps {
-                sh '''
-                sed -i "s|image:.*|image: $IMAGE_NAME:$TAG|" k8s/deployment.yaml
-                kubectl apply -f k8s/deployment.yaml
-                kubectl rollout status deployment/my-app-deployment
-                '''
-            }
-        }
 
-        stage('Deploy Ingress') {
-            steps {
-                sh 'kubectl apply -f k8s/ingress.yaml'
-                sh 'kubectl get ingress'
-            }
-        }
 
-        stage('Smoke Test') {
-            steps {
-                sh 'curl -s http://192.168.56.10/your-path || echo "App not reachable"'
-            }
-        }
+
+
     }
 
-    post {
-        always {
-            node {
 
-            
-                sh 'docker image prune -f'
-                }
-                success {
-                echo "✅ Deployment successful: http://192.168.56.10/your-path"
-                }
-                failure {
-                echo "❌ Deployment failed. Check logs above."
-                }
-            }
-    }
 }
