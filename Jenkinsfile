@@ -67,13 +67,17 @@ pipeline {
 
     post {
         always {
-            sh 'docker image prune -f'
-        }
-        success {
-            echo "✅ Deployment successful: http://192.168.56.10/your-path"
-        }
-        failure {
-            echo "❌ Deployment failed. Check logs above."
-        }
+            node {
+
+            
+                sh 'docker image prune -f'
+                }
+                success {
+                echo "✅ Deployment successful: http://192.168.56.10/your-path"
+                }
+                failure {
+                echo "❌ Deployment failed. Check logs above."
+                }
+            }
     }
 }
