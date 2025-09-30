@@ -33,35 +33,35 @@ pipeline {
             }
         }
 
-    //     stage('Verify kubectl context') {
-    //         steps {
-    //             sh 'kubectl config current-context'
-    //             sh 'kubectl get nodes'
-    //         }
-    //     }
+        stage('Verify kubectl context') {
+            steps {
+                sh 'kubectl config current-context'
+                sh 'kubectl get nodes'
+            }
+        }
 
-    //     stage('Deploy to Kubernetes') {
-    //         steps {
-    //             sh '''
-    //             sed -i "s|image:.*|image: $IMAGE_NAME:$TAG|" k8s/deployment.yaml
-    //             kubectl apply -f k8s/deployment.yaml
-    //             kubectl rollout status deployment/my-app-deployment
-    //             '''
-    //         }
-    //     }
+        stage('Deploy to Kubernetes') {
+            steps {
+                sh '''
+                sed -i "s|image:.*|image: $IMAGE_NAME:$TAG|" k8s/deployment.yaml
+                kubectl apply -f k8s/deployment.yaml
+                kubectl rollout status deployment/my-app-deployment
+                '''
+            }
+        }
 
-    //     stage('Deploy Ingress') {
-    //         steps {
-    //             sh 'kubectl apply -f k8s/ingress.yaml'
-    //             sh 'kubectl get ingress'
-    //         }
-    //     }
+        stage('Deploy Ingress') {
+            steps {
+                sh 'kubectl apply -f k8s/ingress.yaml'
+                sh 'kubectl get ingress'
+            }
+        }
 
-    //     stage('Smoke Test') {
-    //         steps {
-    //             sh 'curl -s http://<your-ingress-ip>/your-path || echo "App not reachable"'
-    //         }
-    //     }
+        stage('Smoke Test') {
+            steps {
+                sh 'curl -s http://<your-ingress-ip>/your-path || echo "App not reachable"'
+            }
+        }
     }
 
     post {
