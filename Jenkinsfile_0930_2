@@ -108,33 +108,40 @@ pipeline {
         stage('🌐 Get Ingress URL') {
             steps {
                 echo '🌐 Getting Ingress URL...'
-                script {
-                    def ingress_ip = "192.168.56.10"     // Master node IP
-                    def ingress_port = "31290"           // NodePort exposed by ingress-nginx-controller
-                    env.INGRESS_URL = "http://${ingress_ip}:${ingress_port}"
+                withEnv(["KUBECONFIG=$KUBECONFIG"]) {
+                    script {
+                        def ingress_ip = sh(
+                            script: "kubectl get svc ingress-nginx-controller -n ingress-nginx -o jsonpath='{.spec.clusterIP}'",
+                            returnStdout: true
+                        ).trim()
 
-                    echo "✅ Ingress URL: ${env.INGRESS_URL}"
+                        if (!ingress_ip) {
+                            error "❌ Ingress controller IP not found."
+                        }
 
-                    echo "========================================="
-                    echo "DEPLOYMENT SUCCESSFUL!"
-                    echo "========================================="
-                    echo "Application URL: ${env.INGRESS_URL}"
-                    echo ""
-                    echo "Available Paths:"
-                    echo "- Home Page: ${env.INGRESS_URL}/"
-                    echo "- About Page: ${env.INGRESS_URL}/about"
-                    echo "- Services Page: ${env.INGRESS_URL}/services"
-                    echo "- Contact Page: ${env.INGRESS_URL}/contact"
-                    echo "========================================="
+                        env.INGRESS_URL = "http://${ingress_ip}"
+                        echo "✅ Ingress URL: ${env.INGRESS_URL}"
 
-                    sh "curl -I ${env.INGRESS_URL}/ || echo 'Home page check failed'"
-                    sh "curl -I ${env.INGRESS_URL}/about || echo 'About page check failed'"
-                    sh "curl -I ${env.INGRESS_URL}/services || echo 'Services page check failed'"
-                    sh "curl -I ${env.INGRESS_URL}/contact || echo 'Contact page check failed'"
+                        echo "========================================="
+                        echo "DEPLOYMENT SUCCESSFUL!"
+                        echo "========================================="
+                        echo "Application URL: ${env.INGRESS_URL}"
+                        echo ""
+                        echo "Available Paths:"
+                        echo "- Home Page: ${env.INGRESS_URL}/"
+                        echo "- About Page: ${env.INGRESS_URL}/about"
+                        echo "- Services Page: ${env.INGRESS_URL}/services"
+                        echo "- Contact Page: ${env.INGRESS_URL}/contact"
+                        echo "========================================="
+
+                        sh "curl -I ${env.INGRESS_URL}/ || echo 'Home page check failed'"
+                        sh "curl -I ${env.INGRESS_URL}/about || echo 'About page check failed'"
+                        sh "curl -I ${env.INGRESS_URL}/services || echo 'Services page check failed'"
+                        sh "curl -I ${env.INGRESS_URL}/contact || echo 'Contact page check failed'"
+                    }
                 }
             }
         }
-
 
     }
 
