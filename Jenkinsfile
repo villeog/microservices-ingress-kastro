@@ -62,7 +62,7 @@ pipeline {
     //             sh 'curl -s http://<your-ingress-ip>/your-path || echo "App not reachable"'
     //         }
     //     }
-    // }
+    }
 
     post {
         always {
