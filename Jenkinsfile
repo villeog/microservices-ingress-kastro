@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_HUB_REPO = 'villers118/techsolutions-app'
-        KUBECONFIG = '/home/cr/.kube/config'
+        KUBECONFIG = '/var/lib/jenkins/.kube/config'
         NAMESPACE = 'default'
         APP_NAME = 'techsolutions'
         DEPLOYMENT_NAME = "${APP_NAME}-deployment"
