@@ -2,19 +2,18 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('villers118') // Jenkins credentials ID
-        IMAGE_NAME = 'villeog/my-app'
-        TAG = "${env.BUILD_NUMBER}"
-        KUBECONFIG = '/var/lib/jenkins/.kube/config' // Local kubeconfig path
-        DEPLOYMENT_NAME = 'my-app-deployment'
-        SERVICE_NAME = 'my-app-service'
-        INGRESS_NAME = 'my-app-ingress'
+        DOCKER_HUB_REPO = 'villers118/techsolutions-app'
+        KUBECONFIG = '/home/cr/.kube/config'
+        NAMESPACE = 'default'
+        APP_NAME = 'techsolutions'
     }
 
     stages {
-        stage('📦 Checkout') {
+        stage('Checkout') {
             steps {
-                git 'https://github.com/villeog/microservices-ingress-kastro.git'
+                echo 'Checking out sourcecode'
+                git branch: 'feature/my-new-feature',
+                    url: 'https://github.com/villeog/microservices-ingress-kastro.git'
             }
         }
 
@@ -42,6 +41,7 @@ pipeline {
                 withEnv(["KUBECONFIG=$KUBECONFIG"]) {
                     sh '''
                     kubectl config current-context
+                    echo "Current context verified"
                     kubectl get nodes -o wide
                     '''
                 }
