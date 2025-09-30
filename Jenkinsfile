@@ -109,9 +109,21 @@ pipeline {
             steps {
                 echo '🌐 Getting Ingress URL...'
                 script {
-                    def ingress_ip = "192.168.56.10"     // Master node IP
-                    def ingress_port = "31290"           // NodePort exposed by ingress-nginx-controller
-                    env.INGRESS_URL = "http://${ingress_ip}:${ingress_port}"
+                    // def ingress_ip = "192.168.56.10"     // Master node IP
+                    // def ingress_port = "31290"           // NodePort exposed by ingress-nginx-controller
+                    // env.INGRESS_URL = "http://${ingress_ip}:${ingress_port}"
+
+                    def ingress_ip = sh(
+                        script: "kubectl get svc ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].ip}'",
+                        returnStdout: true
+                    ).trim()
+
+                    if (!ingress_ip) {
+                        error "❌ Ingress controller IP not found."
+                    }
+
+                    env.INGRESS_URL = "http://${ingress_ip}"
+
 
                     echo "✅ Ingress URL: ${env.INGRESS_URL}"
 
