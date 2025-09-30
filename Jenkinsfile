@@ -2,9 +2,10 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('villers118') // Replace with your Jenkins credentials ID
+        DOCKERHUB_CREDENTIALS = credentials('villers118') // Jenkins credentials ID
         IMAGE_NAME = 'villeog/my-app'
         TAG = "${env.BUILD_NUMBER}"
+        KUBECONFIG = '/var/lib/jenkins/.kube/config' // Path to kubeconfig on host
     }
 
     stages {
@@ -59,7 +60,7 @@ pipeline {
 
         stage('Smoke Test') {
             steps {
-                sh 'curl -s http://<your-ingress-ip>/your-path || echo "App not reachable"'
+                sh 'curl -s http://192.168.56.10/your-path || echo "App not reachable"'
             }
         }
     }
@@ -69,11 +70,10 @@ pipeline {
             sh 'docker image prune -f'
         }
         success {
-            echo "✅ Deployment successful: http://<your-ingress-ip>/your-path"
+            echo "✅ Deployment successful: http://192.168.56.10/your-path"
         }
         failure {
             echo "❌ Deployment failed. Check logs above."
         }
     }
 }
-
