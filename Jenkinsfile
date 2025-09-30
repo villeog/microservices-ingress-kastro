@@ -140,11 +140,6 @@ pipeline {
             }
         }
 
-
-        
-
-       
-
         post {
             always {
                 echo 'Cleaning up Docker images...'
